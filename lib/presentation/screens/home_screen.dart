@@ -3,6 +3,7 @@ import '../../config/responsive.dart';
 import '../../utils/tutorial_manager.dart';
 import 'widgets/app_bar_content.dart';
 import 'widgets/hero_section.dart';
+import 'sections/about_section.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,7 +15,23 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final menuKey = GlobalKey();
   final heroKey = GlobalKey();
+  final aboutKey = GlobalKey();
   late TutorialManager tutorialManager;
+  final ScrollController _scrollController = ScrollController();
+
+  void _scrollToSection(GlobalKey key) {
+    final keyContext = key.currentContext;
+    if (keyContext != null) {
+      Scrollable.ensureVisible(
+        keyContext,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+      if (Responsive.isMobile(context)) {
+        Navigator.pop(context);
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -26,6 +43,12 @@ class _HomeScreenState extends State<HomeScreen> {
       );
       tutorialManager.showTutorial();
     });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -44,7 +67,13 @@ class _HomeScreenState extends State<HomeScreen> {
               )
             : null,
         title: const Text('My Portfolio'),
-        actions: const [AppBarContent()],
+        actions: [
+          AppBarContent(
+            onSectionSelected: _scrollToSection,
+            homeKey: heroKey,
+            aboutKey: aboutKey,
+          ),
+        ],
       ),
       drawer: Responsive.isMobile(context)
           ? Drawer(
@@ -58,11 +87,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   ListTile(
                     title: const Text('Home'),
-                    onTap: () {},
+                    onTap: () => _scrollToSection(heroKey),
                   ),
                   ListTile(
                     title: const Text('About'),
-                    onTap: () {},
+                    onTap: () => _scrollToSection(aboutKey),
                   ),
                   ListTile(
                     title: const Text('Projects'),
@@ -77,12 +106,17 @@ class _HomeScreenState extends State<HomeScreen> {
             )
           : null,
       body: SingleChildScrollView(
+        controller: _scrollController,
         child: Column(
           children: [
             Hero(
               tag: 'hero_section',
               key: heroKey,
               child: const HeroSection(),
+            ),
+            Container(
+              key: aboutKey,
+              child: const AboutSection(),
             ),
           ],
         ),

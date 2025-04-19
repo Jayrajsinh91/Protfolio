@@ -52,7 +52,7 @@ class _AnimatedIntroTextState extends State<AnimatedIntroText> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.1),
+        color: Theme.of(context).colorScheme.primaryContainer.withAlpha(26),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Text(

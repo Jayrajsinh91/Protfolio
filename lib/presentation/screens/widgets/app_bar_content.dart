@@ -2,7 +2,16 @@ import 'package:flutter/material.dart';
 import '../../../config/responsive.dart';
 
 class AppBarContent extends StatelessWidget {
-  const AppBarContent({super.key});
+  final void Function(GlobalKey) onSectionSelected;
+  final GlobalKey homeKey;
+  final GlobalKey aboutKey;
+
+  const AppBarContent({
+    super.key,
+    required this.onSectionSelected,
+    required this.homeKey,
+    required this.aboutKey,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -12,11 +21,11 @@ class AppBarContent extends StatelessWidget {
           ? []
           : <Widget>[
               TextButton(
-                onPressed: () {},
+                onPressed: () => onSectionSelected(homeKey),
                 child: const Text('Home'),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () => onSectionSelected(aboutKey),
                 child: const Text('About'),
               ),
               TextButton(
