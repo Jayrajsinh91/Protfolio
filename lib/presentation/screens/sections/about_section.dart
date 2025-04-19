@@ -32,7 +32,7 @@ class AboutSection extends StatelessWidget {
           'About Me',
           style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
+                color: Colors.white,
               ),
         ),
         const SizedBox(height: 10),
@@ -40,7 +40,7 @@ class AboutSection extends StatelessWidget {
           width: 60,
           height: 4,
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary,
+            color: Colors.white.withOpacity(0.3),
             borderRadius: BorderRadius.circular(2),
           ),
         ),
@@ -175,8 +175,11 @@ Widget _buildRoleChip({
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     decoration: BoxDecoration(
-      color: color.withOpacity(0.1),
+      color: Colors.white.withOpacity(0.1),
       borderRadius: BorderRadius.circular(20),
+      border: Border.all(
+        color: Colors.white.withOpacity(0.2),
+      ),
     ),
     child: Row(
       mainAxisSize: MainAxisSize.min,
@@ -184,13 +187,13 @@ Widget _buildRoleChip({
         Icon(
           icon,
           size: 16,
-          color: color,
+          color: Colors.white,
         ),
         const SizedBox(width: 8),
         Text(
           label,
-          style: TextStyle(
-            color: color,
+          style: const TextStyle(
+            color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -302,14 +305,14 @@ class _InfoCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: color.withOpacity(0.05),
+        color: Colors.white.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withOpacity(0.1),
+          color: Colors.white.withOpacity(0.2),
         ),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.05),
+            color: const Color(0xFF4A00E0).withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -327,10 +330,14 @@ class _InfoCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: Colors.white.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(icon, color: color, size: 20),
+                child: Icon(
+                  icon,
+                  color: Colors.white,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 12),
               Flexible(
@@ -338,15 +345,15 @@ class _InfoCard extends StatelessWidget {
                   title,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: color,
+                        color: Colors.white,
                         letterSpacing: 0.5,
                       ),
                 ),
               ),
             ],
           ),
-          iconColor: color,
-          collapsedIconColor: color,
+          iconColor: Colors.white,
+          collapsedIconColor: Colors.white,
           childrenPadding: const EdgeInsets.all(16),
           children: [
             SingleChildScrollView(
@@ -408,16 +415,18 @@ class _InfoCard extends StatelessWidget {
                         parts[0].trim(),
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: color,
+                              color: Colors.white,
                             ),
                       ),
                       Text(
                         ' — ',
-                        style: TextStyle(color: color),
+                        style: TextStyle(color: Colors.white),
                       ),
                       Text(
                         parts[1].trim(),
-                        style: Theme.of(context).textTheme.titleSmall,
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              color: Colors.white.withOpacity(0.9),
+                            ),
                       ),
                     ],
                   ),
@@ -429,7 +438,7 @@ class _InfoCard extends StatelessWidget {
                     line,
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontWeight: line.endsWith(':') ? FontWeight.bold : FontWeight.normal,
-                          color: line.endsWith(':') ? color : null,
+                          color: line.endsWith(':') ? Colors.white : null,
                         ),
                   ),
                 );

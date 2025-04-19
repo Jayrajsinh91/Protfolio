@@ -14,21 +14,23 @@ class PortfolioApp extends StatelessWidget {
       title: 'My Portfolio',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF6750A4),
-          brightness: Brightness.light,
-        ).copyWith(
-          secondary: const Color(0xFF625B71),
-          tertiary: const Color(0xFF7D5260),
-          background: const Color(0xFFFFFBFE),
+        colorScheme: ColorScheme.light(
+          primary: const Color(0xFF4A00E0),     // Deep Purple
+          secondary: const Color(0xFF8E2DE2),    // Medium Purple
+          surface: Colors.white.withOpacity(0.1),
+          background: Colors.transparent,
+          onSurface: Colors.white,
+          onBackground: Colors.white,
         ),
-        useMaterial3: true,
+        cardColor: Colors.white.withOpacity(0.1),
+        scaffoldBackgroundColor: Colors.transparent,
         textTheme: const TextTheme(
-          bodyLarge: TextStyle(
-            fontFamily: 'Roboto',
-            fontSize: 16,
-            height: 1.5,
-          ),
+          headlineLarge: TextStyle(color: Colors.white),
+          headlineMedium: TextStyle(color: Colors.white),
+          titleLarge: TextStyle(color: Colors.white),
+          titleMedium: TextStyle(color: Colors.white),
+          bodyLarge: TextStyle(color: Colors.white),
+          bodyMedium: TextStyle(color: Colors.white),
         ),
       ),
       home: const HomeScreen(),

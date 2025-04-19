@@ -10,7 +10,6 @@ class ContactSection extends StatefulWidget {
 }
 
 class _ContactSectionState extends State<ContactSection> {
-  final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _messageController = TextEditingController();
@@ -28,8 +27,11 @@ class _ContactSectionState extends State<ContactSection> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: Colors.white.withOpacity(0.1),
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.2),
+        ),
       ),
       child: Column(
         children: [
@@ -50,7 +52,7 @@ class _ContactSectionState extends State<ContactSection> {
           'Get In Touch',
           style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
+                color: Colors.white,
               ),
         ),
         const SizedBox(height: 10),
@@ -58,7 +60,7 @@ class _ContactSectionState extends State<ContactSection> {
           width: 60,
           height: 4,
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary,
+            color: Colors.white.withOpacity(0.3),
             borderRadius: BorderRadius.circular(2),
           ),
         ),
@@ -101,100 +103,6 @@ class _MobileLayout extends StatelessWidget {
     );
   }
 }
-
-class _ContactForm extends StatelessWidget {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _messageController = TextEditingController();
-
-  _ContactForm({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Send Message',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-          ),
-          const SizedBox(height: 20),
-          _buildTextField(
-            controller: _nameController,
-            label: 'Name',
-            icon: Icons.person_outline,
-          ),
-          const SizedBox(height: 16),
-          _buildTextField(
-            controller: _emailController,
-            label: 'Email',
-            icon: Icons.email_outlined,
-            keyboardType: TextInputType.emailAddress,
-          ),
-          const SizedBox(height: 16),
-          _buildTextField(
-            controller: _messageController,
-            label: 'Message',
-            icon: Icons.message_outlined,
-            maxLines: 5,
-          ),
-          const SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  // TODO: Implement send message functionality
-                }
-              },
-              icon: const Icon(Icons.send),
-              label: const Text('Send Message'),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.all(16),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    required IconData icon,
-    TextInputType? keyboardType,
-    int maxLines = 1,
-  }) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: keyboardType,
-      maxLines: maxLines,
-      decoration: InputDecoration(
-        labelText: label,
-        prefixIcon: Icon(icon),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter $label';
-        }
-        if (label == 'Email' && !value.contains('@')) {
-          return 'Please enter a valid email';
-        }
-        return null;
-      },
-    );
-  }
-}
-
 class _ContactInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -283,42 +191,67 @@ class _ContactInfo extends StatelessWidget {
     required String title,
     required String content,
   }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              icon,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+    return InkWell(
+      onTap: title == 'Email' ? () => _launchEmail(content) : null,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
               ),
-              const SizedBox(height: 4),
-              Text(
-                content,
-                style: Theme.of(context).textTheme.bodyLarge,
+              child: Icon(
+                icon,
+                color: Colors.white,
               ),
-            ],
-          ),
-        ],
+            ),
+            const SizedBox(width: 16),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  content,
+                  style: TextStyle(
+                    color: title == 'Email' 
+                        ? Colors.blue[200]
+                        : Colors.white,
+                    decoration: title == 'Email' 
+                        ? TextDecoration.underline
+                        : null,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  void _launchEmail(String email) async {
+    final Uri emailUri = Uri.parse(
+      'mailto:$email?subject=${Uri.encodeComponent("Hello from Portfolio Visitor")}'
+    );
+
+    try {
+      if (!await url_launcher.launchUrl(emailUri)) {
+        throw 'Could not launch email client';
+      }
+    } catch (e) {
+      debugPrint('Error launching email: $e');
+    }
   }
 
   Widget _buildSocialButton({
@@ -331,9 +264,14 @@ class _ContactInfo extends StatelessWidget {
       icon: Icon(icon),
       label: Text(label),
       style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white.withOpacity(0.1),
+        foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(
           horizontal: 20,
           vertical: 12,
+        ),
+        side: BorderSide(
+          color: Colors.white.withOpacity(0.2),
         ),
       ),
     );

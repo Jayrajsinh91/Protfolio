@@ -59,17 +59,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildDrawer() {
     return Drawer(
+      backgroundColor: const Color(0xFF2A1862),  // Dark purple background
       child: Column(
         children: [
           UserAccountsDrawerHeader(
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              color: const Color(0xFF4A00E0).withOpacity(0.3),  // Lighter purple background
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.white.withOpacity(0.1),
+                  width: 1,
+                ),
+              ),
             ),
             currentAccountPicture: CircleAvatar(
               radius: 40,
-              backgroundColor: Theme.of(
-                context,
-              ).colorScheme.primary.withOpacity(0.2),
+              backgroundColor: Colors.white.withOpacity(0.1),
               child: ClipOval(
                 child: Image.asset(
                   'assets/images/me1.jpeg',
@@ -79,93 +84,96 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            accountName: Text(
+            accountName: const Text(
               'Jayrajsinh Thakor',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onSurface,
+                color: Colors.white,
               ),
             ),
             accountEmail: Text(
               'Software Developer',
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                color: Colors.white.withOpacity(0.7),
               ),
             ),
           ),
           Expanded(
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: [
-                _buildDrawerItem(
-                  icon: Icons.home_outlined,
-                  title: 'Home',
-                  onTap: () => _scrollToSection(heroKey),
-                ),
-                _buildDrawerItem(
-                  icon: Icons.person_outline,
-                  title: 'About',
-                  onTap: () => _scrollToSection(aboutKey),
-                ),
-                _buildDrawerItem(
-                  icon: Icons.work_outline,
-                  title: 'Projects',
-                  onTap: () {},
-                ),
-                _buildDrawerItem(
-                  icon: Icons.mail_outline,
-                  title: 'Contact',
-                  onTap: () => _scrollToSection(contactKey),
-                ),
-                const Divider(),
-                _buildDrawerItem(
-                  icon: Icons.code,
-                  title: 'GitHub',
-                  onTap: () async {
-                    final Uri githubUrl = Uri.parse(
-                      'https://github.com/Jayrajsinh91',
-                    );
-                    try {
-                      if (!await url_launcher.launchUrl(
-                        githubUrl,
-                        mode: url_launcher.LaunchMode.inAppWebView,
-                      )) {
-                        throw 'Could not launch $githubUrl';
-                      }
-                    } catch (e) {
-                      debugPrint('Error launching URL: $e');
-                    }
-                  },
-                ),
-                _buildDrawerItem(
-                  icon: Icons.work,
-                  title: 'LinkedIn',
-                  onTap: () async {
-                    final Uri linkedinAppUrl = Uri.parse(
-                      'linkedin://profile/jayrajsinh-thakor-41a66b190',
-                    );
-                    final Uri linkedinWebUrl = Uri.parse(
-                      'https://www.linkedin.com/in/jayrajsinh-thakor-41a66b190/',
-                    );
-
-                    try {
-                      if (await url_launcher.canLaunchUrl(linkedinAppUrl)) {
-                        await url_launcher.launchUrl(linkedinAppUrl);
-                      } else {
+            child: Container(
+              color: const Color(0xFF2A1862),  // Same as drawer background
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  _buildDrawerItem(
+                    icon: Icons.home_outlined,
+                    title: 'Home',
+                    onTap: () => _scrollToSection(heroKey),
+                  ),
+                  _buildDrawerItem(
+                    icon: Icons.person_outline,
+                    title: 'About',
+                    onTap: () => _scrollToSection(aboutKey),
+                  ),
+                  _buildDrawerItem(
+                    icon: Icons.work_outline,
+                    title: 'Projects',
+                    onTap: () {},
+                  ),
+                  _buildDrawerItem(
+                    icon: Icons.mail_outline,
+                    title: 'Contact',
+                    onTap: () => _scrollToSection(contactKey),
+                  ),
+                  const Divider(),
+                  _buildDrawerItem(
+                    icon: Icons.code,
+                    title: 'GitHub',
+                    onTap: () async {
+                      final Uri githubUrl = Uri.parse(
+                        'https://github.com/Jayrajsinh91',
+                      );
+                      try {
                         if (!await url_launcher.launchUrl(
-                          linkedinWebUrl,
-                          mode: url_launcher.LaunchMode.externalApplication,
+                          githubUrl,
+                          mode: url_launcher.LaunchMode.inAppWebView,
                         )) {
-                          throw 'Could not launch LinkedIn';
+                          throw 'Could not launch $githubUrl';
                         }
+                      } catch (e) {
+                        debugPrint('Error launching URL: $e');
                       }
-                    } catch (e) {
-                      debugPrint('Error launching URL: $e');
-                    }
-                  },
-                ),
-              ],
+                    },
+                  ),
+                  _buildDrawerItem(
+                    icon: Icons.work,
+                    title: 'LinkedIn',
+                    onTap: () async {
+                      final Uri linkedinAppUrl = Uri.parse(
+                        'linkedin://profile/jayrajsinh-thakor-41a66b190',
+                      );
+                      final Uri linkedinWebUrl = Uri.parse(
+                        'https://www.linkedin.com/in/jayrajsinh-thakor-41a66b190/',
+                      );
+
+                      try {
+                        if (await url_launcher.canLaunchUrl(linkedinAppUrl)) {
+                          await url_launcher.launchUrl(linkedinAppUrl);
+                        } else {
+                          if (!await url_launcher.launchUrl(
+                            linkedinWebUrl,
+                            mode: url_launcher.LaunchMode.externalApplication,
+                          )) {
+                            throw 'Could not launch LinkedIn';
+                          }
+                        }
+                      } catch (e) {
+                        debugPrint('Error launching URL: $e');
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -179,11 +187,32 @@ class _HomeScreenState extends State<HomeScreen> {
     required VoidCallback onTap,
   }) {
     return ListTile(
-      leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
-      title: Text(title, style: const TextStyle(fontSize: 16)),
-      onTap: onTap, // Just call onTap directly
+      leading: SizedBox(
+        width: 32,
+        child: Icon(
+          icon, 
+          color: Colors.white,
+          size: 22,
+        ),
+      ),
+      title: Text(
+        title, 
+        style: const TextStyle(
+          fontSize: 16,
+          color: Colors.white,
+          height: 1.2,
+        ),
+      ),
+      onTap: onTap,
       dense: true,
-      horizontalTitleGap: 0,
+      visualDensity: VisualDensity.compact, 
+      horizontalTitleGap: 8,  
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: 10,  
+        vertical: 5,     
+      ),
+      hoverColor: Colors.white.withOpacity(0.1),
+      minLeadingWidth: 0, 
     );
   }
 

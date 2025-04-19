@@ -24,14 +24,11 @@ class _ImageCarouselState extends State<ImageCarousel> {
       children: [
         Container(
           decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.1),
             borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(26),
-                blurRadius: 15,
-                offset: const Offset(0, 5),
-              ),
-            ],
+            border: Border.all(
+              color: Colors.white.withOpacity(0.2),
+            ),
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
