@@ -4,6 +4,7 @@ import '../../utils/tutorial_manager.dart';
 import 'widgets/app_bar_content.dart';
 import 'widgets/hero_section.dart';
 import 'sections/about_section.dart';
+import 'sections/contact_section.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,6 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final menuKey = GlobalKey();
   final heroKey = GlobalKey();
   final aboutKey = GlobalKey();
+  final contactKey = GlobalKey();
   late TutorialManager tutorialManager;
   final ScrollController _scrollController = ScrollController();
 
@@ -117,6 +119,10 @@ class _HomeScreenState extends State<HomeScreen> {
             Container(
               key: aboutKey,
               child: const AboutSection(),
+            ),
+            Container(
+              key: contactKey,
+              child: const ContactSection(),
             ),
           ],
         ),
