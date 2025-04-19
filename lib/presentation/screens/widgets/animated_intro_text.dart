@@ -103,13 +103,17 @@ class _AnimatedIntroTextState extends State<AnimatedIntroText> {
                       fontSize: 20,
                       height: 1.5,
                       letterSpacing: 0.5,
-                      color: Theme.of(context).colorScheme.onSurface,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                   TextSpan(
                     text: _showCursor ? '|' : ' ',
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: 20,
+                      height: 1.5,
+                      letterSpacing: 0.5,
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -121,18 +125,37 @@ class _AnimatedIntroTextState extends State<AnimatedIntroText> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  TextButton.icon(
-                    onPressed: _toggleAnimation,
-                    icon: Icon(
-                      _isAnimating ? Icons.pause : Icons.play_arrow,
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.purple.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.3),
+                      ),
                     ),
-                    label: Text(_isAnimating ? 'Pause' : 'Play'),
+                    child: TextButton.icon(
+                      onPressed: _toggleAnimation,
+                      icon: Icon(
+                      _isAnimating ? Icons.pause : Icons.play_arrow,
+                      color: Colors.white,
+                    ),
+                    label: Text(_isAnimating ? 'Pause' : 'Play', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold ),),
+                  ),
                   ),
                   const SizedBox(width: 8),
-                  TextButton.icon(
-                    onPressed: _skipAnimation,
-                    icon: const Icon(Icons.skip_next),
-                    label: const Text('Skip'),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.purple.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.3),
+                      ),
+                    ),
+                    child: TextButton.icon(
+                      onPressed: _skipAnimation,
+                      icon: const Icon(Icons.skip_next, color: Colors.white,),
+                      label: const Text('Skip', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+                    ),
                   ),
                 ],
               ),
@@ -140,10 +163,19 @@ class _AnimatedIntroTextState extends State<AnimatedIntroText> {
               const SizedBox(height: 20),
               Align(
                 alignment: Alignment.centerRight,
-                child: TextButton.icon(
-                  onPressed: _toggleAnimation,
-                  icon: const Icon(Icons.replay),
-                  label: const Text('Replay'),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.purple.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.3),
+                    ),
+                  ),
+                  child: TextButton.icon(
+                    onPressed: _toggleAnimation,
+                    icon: const Icon(Icons.replay, color: Colors.white,),
+                    label: const Text('Replay', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+                  ),
                 ),
               ),
             ],

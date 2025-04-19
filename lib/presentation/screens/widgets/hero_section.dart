@@ -11,7 +11,7 @@ class HeroSection extends StatelessWidget {
       constraints: BoxConstraints(
         minHeight: Responsive.isMobile(context) ? 500 : 700,
       ),
-      color: Theme.of(context).colorScheme.background,
+      color: Colors.transparent,
       child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(
@@ -21,23 +21,57 @@ class HeroSection extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  '👋 Hello World!',
+                  style: TextStyle(
+                    fontSize: Responsive.isMobile(context) ? 16 : 20,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 30),
               Text(
                 'Welcome to My Portfolio',
                 style: TextStyle(
                   fontSize: Responsive.isMobile(context) ? 32 : 48,
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Colors.white,
+                  letterSpacing: 1,
+                  height: 1.2,
                 ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
-              Text(
-                'Flutter Developer | UI/UX Enthusiast',
-                style: TextStyle(
-                  fontSize: Responsive.isMobile(context) ? 18 : 24,
-                  color: Theme.of(context).colorScheme.secondary,
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
                 ),
-                textAlign: TextAlign.center,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.3),
+                  ),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Text(
+                  'Software Developer',
+                  style: TextStyle(
+                    fontSize: Responsive.isMobile(context) ? 18 : 24,
+                    color: Colors.white,
+                    letterSpacing: 0.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ),
               const SizedBox(height: 40),
               const AnimatedIntroText(),

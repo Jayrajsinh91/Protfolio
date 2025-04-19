@@ -122,60 +122,80 @@ Widget _buildContent(BuildContext context) {
 }
 
 Widget _buildRoleSection(BuildContext context) {
-  return Row(
+  return Wrap(
+    spacing: 12,
+    runSpacing: 12,
     children: [
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.code,
-              size: 16,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              'Flutter Developer',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
+      _buildRoleChip(
+        context: context,
+        icon: Icons.code,
+        label: 'Flutter Developer',
+        color: Theme.of(context).colorScheme.primary,
       ),
-      const SizedBox(width: 12),
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.design_services,
-              size: 16,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              'UI/UX Enthusiast',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
+      _buildRoleChip(
+        context: context,
+        icon: Icons.android,
+        label: 'Android Developer',
+        color: Theme.of(context).colorScheme.primary,
+      ),
+      _buildRoleChip(
+        context: context,
+        icon: Icons.design_services,
+        label: 'UI/UX Enthusiast',
+        color: Theme.of(context).colorScheme.secondary,
+      ),
+      _buildRoleChip(
+        context: context,
+        icon: Icons.mobile_friendly,
+        label: 'Mobile App Developer',
+        color: Theme.of(context).colorScheme.primary,
+      ),
+      _buildRoleChip(
+        context: context,
+        icon: Icons.web,
+        label: 'Web Developer',
+        color: Theme.of(context).colorScheme.secondary,
+      ),
+      _buildRoleChip(
+        context: context,
+        icon: Icons.cloud_done,
+        label: 'AWS Developer',
+        color: Theme.of(context).colorScheme.tertiary,
       ),
     ],
+  );
+}
+
+Widget _buildRoleChip({
+  required BuildContext context,
+  required IconData icon,
+  required String label,
+  required Color color,
+}) {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+    decoration: BoxDecoration(
+      color: color.withOpacity(0.1),
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          icon,
+          size: 16,
+          color: color,
+        ),
+        const SizedBox(width: 8),
+        Text(
+          label,
+          style: TextStyle(
+            color: color,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    ),
   );
 }
 
@@ -287,6 +307,13 @@ class _InfoCard extends StatelessWidget {
         border: Border.all(
           color: color.withOpacity(0.1),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Theme(
         data: Theme.of(context).copyWith(
@@ -295,35 +322,122 @@ class _InfoCard extends StatelessWidget {
         child: ExpansionTile(
           initiallyExpanded: false,
           title: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, color: color),
-              const SizedBox(width: 10),
-              Text(
-                title,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: color,
-                    ),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, color: color, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Flexible(
+                child: Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: color,
+                        letterSpacing: 0.5,
+                      ),
+                ),
               ),
             ],
           ),
           iconColor: color,
           collapsedIconColor: color,
-          childrenPadding: const EdgeInsets.only(
-            left: 20,
-            right: 20,
-            bottom: 20,
-          ),
+          childrenPadding: const EdgeInsets.all(16),
           children: [
-            Text(
-              content,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    height: 1.5,
-                  ),
+            SingleChildScrollView(
+              child: _buildRichContent(context, content),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildRichContent(BuildContext context, String content) {
+    final sections = content.split('\n\n');
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: sections.map((section) {
+        final lines = section.split('\n');
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: lines.map((line) {
+              if (line.startsWith('•')) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 3),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(top: 8),
+                        width: 5,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: color,
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          line.substring(1).trim(),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                height: 1.4,
+                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                              ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              } else if (line.contains('—')) {
+                final parts = line.split('—');
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Text(
+                        parts[0].trim(),
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: color,
+                            ),
+                      ),
+                      Text(
+                        ' — ',
+                        style: TextStyle(color: color),
+                      ),
+                      Text(
+                        parts[1].trim(),
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: Text(
+                    line,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: line.endsWith(':') ? FontWeight.bold : FontWeight.normal,
+                          color: line.endsWith(':') ? color : null,
+                        ),
+                  ),
+                );
+              }
+            }).toList(),
+          ),
+        );
+      }).toList(),
     );
   }
 } 

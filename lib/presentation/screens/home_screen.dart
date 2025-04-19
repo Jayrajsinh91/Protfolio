@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import '../../config/responsive.dart';
 import '../../utils/tutorial_manager.dart';
 import 'widgets/app_bar_content.dart';
@@ -22,17 +23,20 @@ class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
 
   void _scrollToSection(GlobalKey key) {
-    final keyContext = key.currentContext;
-    if (keyContext != null) {
-      Scrollable.ensureVisible(
-        keyContext,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeInOut,
-      );
-      if (Responsive.isMobile(context)) {
-        Navigator.pop(context);
-      }
+    if (Responsive.isMobile(context)) {
+      Navigator.pop(context);
     }
+
+    Future.delayed(const Duration(milliseconds: 300), () {
+      final keyContext = key.currentContext;
+      if (keyContext != null) {
+        Scrollable.ensureVisible(
+          keyContext,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
   }
 
   @override
@@ -53,22 +57,165 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  Widget _buildDrawer() {
+    return Drawer(
+      child: Column(
+        children: [
+          UserAccountsDrawerHeader(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+            ),
+            currentAccountPicture: CircleAvatar(
+              radius: 40,
+              backgroundColor: Theme.of(
+                context,
+              ).colorScheme.primary.withOpacity(0.2),
+              child: ClipOval(
+                child: Image.asset(
+                  'assets/images/me1.jpeg',
+                  width: 80,
+                  height: 80,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            accountName: Text(
+              'Jayrajsinh Thakor',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+            accountEmail: Text(
+              'Software Developer',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                _buildDrawerItem(
+                  icon: Icons.home_outlined,
+                  title: 'Home',
+                  onTap: () => _scrollToSection(heroKey),
+                ),
+                _buildDrawerItem(
+                  icon: Icons.person_outline,
+                  title: 'About',
+                  onTap: () => _scrollToSection(aboutKey),
+                ),
+                _buildDrawerItem(
+                  icon: Icons.work_outline,
+                  title: 'Projects',
+                  onTap: () {},
+                ),
+                _buildDrawerItem(
+                  icon: Icons.mail_outline,
+                  title: 'Contact',
+                  onTap: () => _scrollToSection(contactKey),
+                ),
+                const Divider(),
+                _buildDrawerItem(
+                  icon: Icons.code,
+                  title: 'GitHub',
+                  onTap: () async {
+                    final Uri githubUrl = Uri.parse(
+                      'https://github.com/Jayrajsinh91',
+                    );
+                    try {
+                      if (!await url_launcher.launchUrl(
+                        githubUrl,
+                        mode: url_launcher.LaunchMode.inAppWebView,
+                      )) {
+                        throw 'Could not launch $githubUrl';
+                      }
+                    } catch (e) {
+                      debugPrint('Error launching URL: $e');
+                    }
+                  },
+                ),
+                _buildDrawerItem(
+                  icon: Icons.work,
+                  title: 'LinkedIn',
+                  onTap: () async {
+                    final Uri linkedinAppUrl = Uri.parse(
+                      'linkedin://profile/jayrajsinh-thakor-41a66b190',
+                    );
+                    final Uri linkedinWebUrl = Uri.parse(
+                      'https://www.linkedin.com/in/jayrajsinh-thakor-41a66b190/',
+                    );
+
+                    try {
+                      if (await url_launcher.canLaunchUrl(linkedinAppUrl)) {
+                        await url_launcher.launchUrl(linkedinAppUrl);
+                      } else {
+                        if (!await url_launcher.launchUrl(
+                          linkedinWebUrl,
+                          mode: url_launcher.LaunchMode.externalApplication,
+                        )) {
+                          throw 'Could not launch LinkedIn';
+                        }
+                      }
+                    } catch (e) {
+                      debugPrint('Error launching URL: $e');
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDrawerItem({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
+      title: Text(title, style: const TextStyle(fontSize: 16)),
+      onTap: onTap, // Just call onTap directly
+      dense: true,
+      horizontalTitleGap: 0,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
+      extendBodyBehindAppBar: false,
       appBar: AppBar(
-        leading: Responsive.isMobile(context)
-            ? Builder(
-                builder: (context) => IconButton(
-                  key: menuKey,
-                  icon: const Icon(Icons.menu),
-                  onPressed: () {
-                    Scaffold.of(context).openDrawer();
-                  },
-                ),
-              )
-            : null,
-        title: const Text('My Portfolio'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        elevation: 0,
+        leading:
+            Responsive.isMobile(context)
+                ? Builder(
+                  builder:
+                      (context) => IconButton(
+                        key: menuKey,
+                        icon: const Icon(Icons.menu),
+                        onPressed: () {
+                          Scaffold.of(context).openDrawer();
+                        },
+                      ),
+                )
+                : null,
+        title: const Text(
+          'My Portfolio',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
         actions: [
           AppBarContent(
             onSectionSelected: _scrollToSection,
@@ -77,56 +224,37 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      drawer: Responsive.isMobile(context)
-          ? Drawer(
-              child: ListView(
-                children: [
-                  const DrawerHeader(
-                    child: Text(
-                      'Portfolio Menu',
-                      style: TextStyle(fontSize: 24),
-                    ),
-                  ),
-                  ListTile(
-                    title: const Text('Home'),
-                    onTap: () => _scrollToSection(heroKey),
-                  ),
-                  ListTile(
-                    title: const Text('About'),
-                    onTap: () => _scrollToSection(aboutKey),
-                  ),
-                  ListTile(
-                    title: const Text('Projects'),
-                    onTap: () {},
-                  ),
-                  ListTile(
-                    title: const Text('Contact'),
-                    onTap: () {},
-                  ),
-                ],
+      drawer: Responsive.isMobile(context) ? _buildDrawer() : null,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              const Color(0xFF4A00E0).withOpacity(0.8),
+              const Color(0xFF8E2DE2).withOpacity(0.5),
+              Colors.white.withOpacity(0.1),
+            ],
+          ),
+        ),
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          child: Column(
+            children: [
+              Hero(
+                tag: 'hero_section',
+                key: heroKey,
+                child: const HeroSection(),
               ),
-            )
-          : null,
-      body: SingleChildScrollView(
-        controller: _scrollController,
-        child: Column(
-          children: [
-            Hero(
-              tag: 'hero_section',
-              key: heroKey,
-              child: const HeroSection(),
-            ),
-            Container(
-              key: aboutKey,
-              child: const AboutSection(),
-            ),
-            Container(
-              key: contactKey,
-              child: const ContactSection(),
-            ),
-          ],
+              const SizedBox(height: 20),
+              Container(key: aboutKey, child: const AboutSection()),
+              const SizedBox(height: 30),
+              Container(key: contactKey, child: const ContactSection()),
+              const SizedBox(height: 30),
+            ],
+          ),
         ),
       ),
     );
   }
-} 
+}
