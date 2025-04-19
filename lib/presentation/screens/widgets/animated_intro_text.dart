@@ -9,15 +9,18 @@ class AnimatedIntroText extends StatefulWidget {
 }
 
 class _AnimatedIntroTextState extends State<AnimatedIntroText> {
-  static const _introText = "Hi there! 👋\n\n"
-      "I'm Jay, and I'm delighted to see you here! ✨\n\n"
-      "Welcome to my portfolio app where I'd love to share a bit about myself and my journey. "
-      "Feel free to explore and discover more about my work and experiences. 🚀\n\n"
-      "Let's connect and create something amazing together! 💫";
+  static const _introText = 'Hi there!\n\n'
+      'I\'m Jay, and I\'m delighted to see you here!\n\n'
+      'Welcome to my portfolio app where I\'d love to share a bit about myself and my journey. '
+      'Feel free to explore and discover more about my work and experiences.\n\n'
+      'Let\'s connect and create something amazing together!';
 
   String _displayText = '';
   bool _showCursor = true;
   int _currentIndex = 0;
+  bool _isAnimating = true;
+  Timer? _typeTimer;
+  Timer? _cursorTimer;
 
   @override
   void initState() {
@@ -27,8 +30,9 @@ class _AnimatedIntroTextState extends State<AnimatedIntroText> {
   }
 
   void _startAnimation() {
-    Timer.periodic(const Duration(milliseconds: 50), (timer) {
-      if (_currentIndex < _introText.length) {
+    _typeTimer?.cancel();
+    _typeTimer = Timer.periodic(const Duration(milliseconds: 50), (timer) {
+      if (_currentIndex < _introText.length && _isAnimating) {
         setState(() {
           _displayText = _introText.substring(0, _currentIndex + 1);
           _currentIndex++;
@@ -40,29 +44,119 @@ class _AnimatedIntroTextState extends State<AnimatedIntroText> {
   }
 
   void _blinkCursor() {
-    Timer.periodic(const Duration(milliseconds: 500), (timer) {
-      setState(() {
-        _showCursor = !_showCursor;
-      });
+    _cursorTimer?.cancel();
+    _cursorTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      if (mounted) {
+        setState(() {
+          _showCursor = !_showCursor;
+        });
+      }
+    });
+  }
+
+  void _toggleAnimation() {
+    setState(() {
+      if (_currentIndex >= _introText.length) {
+        _currentIndex = 0;
+        _displayText = '';
+        _isAnimating = true;
+        _startAnimation();
+      } else {
+        _isAnimating = !_isAnimating;
+        if (_isAnimating) {
+          _startAnimation();
+        }
+      }
+    });
+  }
+
+  void _skipAnimation() {
+    setState(() {
+      _currentIndex = _introText.length;
+      _displayText = _introText;
+      _isAnimating = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer.withAlpha(26),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Text(
-        '$_displayText${_showCursor ? '|' : ''}',
-        style: const TextStyle(
-          fontSize: 20,
-          height: 1.5,
-          letterSpacing: 0.5,
+    return GestureDetector(
+      onTap: _toggleAnimation,
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primaryContainer.withAlpha(26),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.primary.withAlpha(50),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: _displayText,
+                    style: TextStyle(
+                      fontSize: 20,
+                      height: 1.5,
+                      letterSpacing: 0.5,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                  TextSpan(
+                    text: _showCursor ? '|' : ' ',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (_currentIndex < _introText.length) ...[
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton.icon(
+                    onPressed: _toggleAnimation,
+                    icon: Icon(
+                      _isAnimating ? Icons.pause : Icons.play_arrow,
+                    ),
+                    label: Text(_isAnimating ? 'Pause' : 'Play'),
+                  ),
+                  const SizedBox(width: 8),
+                  TextButton.icon(
+                    onPressed: _skipAnimation,
+                    icon: const Icon(Icons.skip_next),
+                    label: const Text('Skip'),
+                  ),
+                ],
+              ),
+            ] else ...[
+              const SizedBox(height: 20),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton.icon(
+                  onPressed: _toggleAnimation,
+                  icon: const Icon(Icons.replay),
+                  label: const Text('Replay'),
+                ),
+              ),
+            ],
+          ],
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _typeTimer?.cancel();
+    _cursorTimer?.cancel();
+    super.dispose();
   }
 } 
