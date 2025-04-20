@@ -1,8 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+
 import 'presentation/screens/home_screen.dart';
 
-void main() {
+void main() async {  // Make main async
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  
+  // Enable all orientations
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
+  ]);
+  
   runApp(const PortfolioApp());
+
+  // Add a small delay to show splash
+  await Future.delayed(const Duration(seconds: 2));
+  FlutterNativeSplash.remove();
 }
 
 class PortfolioApp extends StatelessWidget {

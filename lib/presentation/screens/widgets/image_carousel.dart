@@ -72,8 +72,8 @@ class _ImageCarouselState extends State<ImageCarousel> {
                 height: 5,
                 decoration: BoxDecoration(
                   color: currentIndex == index
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.primary.withOpacity(0.4),
+                      ? Colors.white
+                      : Colors.white.withOpacity(0.4),
                   borderRadius: BorderRadius.circular(4),
                 ),
               );

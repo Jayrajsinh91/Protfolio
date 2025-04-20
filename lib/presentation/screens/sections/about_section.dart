@@ -100,7 +100,7 @@ Widget _buildImage() {
       ),
       const SizedBox(height: 15),
       Text(
-        'Swipe or click arrows to see more photos',
+        'Swipe to see more photos',
         style: TextStyle(
           color: Colors.grey[600],
           fontSize: 12,

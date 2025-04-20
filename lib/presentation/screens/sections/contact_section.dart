@@ -104,6 +104,71 @@ class _MobileLayout extends StatelessWidget {
   }
 }
 class _ContactInfo extends StatelessWidget {
+  Future<void> _showExitConfirmationDialog(BuildContext context, String site, Function() onConfirm) async {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF2A1862),
+        title: Text('Open $site?', style: const TextStyle(color: Colors.white)),
+        content: Text(
+          'You will be redirected to $site.',
+          style: const TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel', style: TextStyle(color: Colors.white70)),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              onConfirm();
+            },
+            child: const Text('Continue', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _launchEmail(BuildContext context, String email) async {
+    _showExitConfirmationDialog(context, 'Email Client', () async {
+      final Uri emailUri = Uri.parse(
+        'mailto:$email?subject=${Uri.encodeComponent("Hello from Portfolio Visitor")}'
+      );
+      try {
+        if (!await url_launcher.launchUrl(emailUri)) {
+          throw 'Could not launch email client';
+        }
+      } catch (e) {
+        debugPrint('Error launching email: $e');
+      }
+    });
+  }
+
+  Widget _buildSocialButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+  }) {
+    return ElevatedButton.icon(
+      onPressed: onPressed,
+      icon: Icon(icon),
+      label: Text(label),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white.withOpacity(0.1),
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 12,
+        ),
+        side: BorderSide(
+          color: Colors.white.withOpacity(0.2),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -141,42 +206,45 @@ class _ContactInfo extends StatelessWidget {
             _buildSocialButton(
               icon: Icons.code,
               label: 'GitHub',
-              onPressed: () async {
-                final Uri githubUrl = Uri.parse('https://github.com/Jayrajsinh91');
-                try {
-                  if (!await url_launcher.launchUrl(
-                    githubUrl,
-                    mode: url_launcher.LaunchMode.inAppWebView,
-                  )) {
-                    throw 'Could not launch $githubUrl';
+              onPressed: () {
+                _showExitConfirmationDialog(context, 'GitHub', () async {
+                  final Uri githubUrl = Uri.parse('https://github.com/Jayrajsinh91');
+                  try {
+                    if (!await url_launcher.launchUrl(
+                      githubUrl,
+                      mode: url_launcher.LaunchMode.inAppWebView,
+                    )) {
+                      throw 'Could not launch $githubUrl';
+                    }
+                  } catch (e) {
+                    debugPrint('Error launching URL: $e');
                   }
-                } catch (e) {
-                  debugPrint('Error launching URL: $e');
-                }
+                });
               },
             ),
             const SizedBox(width: 12),
             _buildSocialButton(
               icon: Icons.work,
               label: 'LinkedIn',
-              onPressed: () async {
-                final Uri linkedinAppUrl = Uri.parse('linkedin://profile/jayrajsinh-thakor-41a66b190');
-                final Uri linkedinWebUrl = Uri.parse('https://www.linkedin.com/in/jayrajsinh-thakor-41a66b190/');
-                
-                try {
-                  if (await url_launcher.canLaunchUrl(linkedinAppUrl)) {
-                    await url_launcher.launchUrl(linkedinAppUrl);
-                  } else {
-                    if (!await url_launcher.launchUrl(
-                      linkedinWebUrl,
-                      mode: url_launcher.LaunchMode.externalApplication,
-                    )) {
-                      throw 'Could not launch LinkedIn';
+              onPressed: () {
+                _showExitConfirmationDialog(context, 'LinkedIn', () async {
+                  final Uri linkedinAppUrl = Uri.parse('linkedin://profile/jayrajsinh-thakor-41a66b190');
+                  final Uri linkedinWebUrl = Uri.parse('https://www.linkedin.com/in/jayrajsinh-thakor-41a66b190/');
+                  try {
+                    if (await url_launcher.canLaunchUrl(linkedinAppUrl)) {
+                      await url_launcher.launchUrl(linkedinAppUrl);
+                    } else {
+                      if (!await url_launcher.launchUrl(
+                        linkedinWebUrl,
+                        mode: url_launcher.LaunchMode.externalApplication,
+                      )) {
+                        throw 'Could not launch LinkedIn';
+                      }
                     }
+                  } catch (e) {
+                    debugPrint('Error launching URL: $e');
                   }
-                } catch (e) {
-                  debugPrint('Error launching URL: $e');
-                }
+                });
               },
             ),
           ],
@@ -192,7 +260,7 @@ class _ContactInfo extends StatelessWidget {
     required String content,
   }) {
     return InkWell(
-      onTap: title == 'Email' ? () => _launchEmail(content) : null,
+      onTap: title == 'Email' ? () => _launchEmail(context, content) : null,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 20),
         child: Row(
@@ -235,43 +303,6 @@ class _ContactInfo extends StatelessWidget {
               ],
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  void _launchEmail(String email) async {
-    final Uri emailUri = Uri.parse(
-      'mailto:$email?subject=${Uri.encodeComponent("Hello from Portfolio Visitor")}'
-    );
-
-    try {
-      if (!await url_launcher.launchUrl(emailUri)) {
-        throw 'Could not launch email client';
-      }
-    } catch (e) {
-      debugPrint('Error launching email: $e');
-    }
-  }
-
-  Widget _buildSocialButton({
-    required IconData icon,
-    required String label,
-    required VoidCallback onPressed,
-  }) {
-    return ElevatedButton.icon(
-      onPressed: onPressed,
-      icon: Icon(icon),
-      label: Text(label),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white.withOpacity(0.1),
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 12,
-        ),
-        side: BorderSide(
-          color: Colors.white.withOpacity(0.2),
         ),
       ),
     );

@@ -23,10 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
 
   void _scrollToSection(GlobalKey key) {
-    if (Responsive.isMobile(context)) {
       Navigator.pop(context);
-    }
-
     Future.delayed(const Duration(milliseconds: 300), () {
       final keyContext = key.currentContext;
       if (keyContext != null) {
@@ -57,14 +54,41 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  Future<void> _showExitConfirmationDialog(String site, Function() onConfirm) async {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF2A1862),
+        title: Text('Open $site?', style: const TextStyle(color: Colors.white)),
+        content: Text(
+          'You will be redirected to $site.',
+          style: const TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel', style: TextStyle(color: Colors.white70)),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              onConfirm();
+            },
+            child: const Text('Continue', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildDrawer() {
     return Drawer(
-      backgroundColor: const Color(0xFF2A1862),  // Dark purple background
+      backgroundColor: const Color(0xFF2A1862),   
       child: Column(
         children: [
           UserAccountsDrawerHeader(
             decoration: BoxDecoration(
-              color: const Color(0xFF4A00E0).withOpacity(0.3),  // Lighter purple background
+              color: const Color(0xFF4A00E0).withOpacity(0.3), 
               border: Border(
                 bottom: BorderSide(
                   color: Colors.white.withOpacity(0.1),
@@ -101,7 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Expanded(
             child: Container(
-              color: const Color(0xFF2A1862),  // Same as drawer background
+              color: const Color(0xFF2A1862),  
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
@@ -130,46 +154,43 @@ class _HomeScreenState extends State<HomeScreen> {
                     icon: Icons.code,
                     title: 'GitHub',
                     onTap: () async {
-                      final Uri githubUrl = Uri.parse(
-                        'https://github.com/Jayrajsinh91',
-                      );
-                      try {
-                        if (!await url_launcher.launchUrl(
-                          githubUrl,
-                          mode: url_launcher.LaunchMode.inAppWebView,
-                        )) {
-                          throw 'Could not launch $githubUrl';
+                      _showExitConfirmationDialog('GitHub', () async {
+                        final Uri githubUrl = Uri.parse('https://github.com/Jayrajsinh91');
+                        try {
+                          if (!await url_launcher.launchUrl(
+                            githubUrl,
+                            mode: url_launcher.LaunchMode.inAppWebView,
+                          )) {
+                            throw 'Could not launch $githubUrl';
+                          }
+                        } catch (e) {
+                          debugPrint('Error launching URL: $e');
                         }
-                      } catch (e) {
-                        debugPrint('Error launching URL: $e');
-                      }
+                      });
                     },
                   ),
                   _buildDrawerItem(
                     icon: Icons.work,
                     title: 'LinkedIn',
                     onTap: () async {
-                      final Uri linkedinAppUrl = Uri.parse(
-                        'linkedin://profile/jayrajsinh-thakor-41a66b190',
-                      );
-                      final Uri linkedinWebUrl = Uri.parse(
-                        'https://www.linkedin.com/in/jayrajsinh-thakor-41a66b190/',
-                      );
-
-                      try {
-                        if (await url_launcher.canLaunchUrl(linkedinAppUrl)) {
-                          await url_launcher.launchUrl(linkedinAppUrl);
-                        } else {
-                          if (!await url_launcher.launchUrl(
-                            linkedinWebUrl,
-                            mode: url_launcher.LaunchMode.externalApplication,
-                          )) {
-                            throw 'Could not launch LinkedIn';
+                      _showExitConfirmationDialog('LinkedIn', () async {
+                        final Uri linkedinAppUrl = Uri.parse('linkedin://profile/jayrajsinh-thakor-41a66b190');
+                        final Uri linkedinWebUrl = Uri.parse('https://www.linkedin.com/in/jayrajsinh-thakor-41a66b190/');
+                        try {
+                          if (await url_launcher.canLaunchUrl(linkedinAppUrl)) {
+                            await url_launcher.launchUrl(linkedinAppUrl);
+                          } else {
+                            if (!await url_launcher.launchUrl(
+                              linkedinWebUrl,
+                              mode: url_launcher.LaunchMode.externalApplication,
+                            )) {
+                              throw 'Could not launch LinkedIn';
+                            }
                           }
+                        } catch (e) {
+                          debugPrint('Error launching URL: $e');
                         }
-                      } catch (e) {
-                        debugPrint('Error launching URL: $e');
-                      }
+                      });
                     },
                   ),
                 ],
@@ -218,25 +239,25 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    
     return Scaffold(
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: false,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
         elevation: 0,
-        leading:
-            Responsive.isMobile(context)
-                ? Builder(
-                  builder:
-                      (context) => IconButton(
-                        key: menuKey,
-                        icon: const Icon(Icons.menu),
-                        onPressed: () {
-                          Scaffold.of(context).openDrawer();
-                        },
-                      ),
-                )
-                : null,
+        leading: Responsive.isMobile(context) || isLandscape
+            ? Builder(
+                builder: (context) => IconButton(
+                  key: menuKey,
+                  icon: const Icon(Icons.menu),
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                ),
+              )
+            : null,
         title: const Text(
           'My Portfolio',
           style: TextStyle(
@@ -246,23 +267,24 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         actions: [
-          AppBarContent(
-            onSectionSelected: _scrollToSection,
-            homeKey: heroKey,
-            aboutKey: aboutKey,
-          ),
+          
+            AppBarContent(
+              onSectionSelected: _scrollToSection,
+              homeKey: heroKey,
+              aboutKey: aboutKey,
+            ),
         ],
       ),
-      drawer: Responsive.isMobile(context) ? _buildDrawer() : null,
+      drawer: (Responsive.isMobile(context) || isLandscape) ? _buildDrawer() : null,
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              const Color(0xFF4A00E0).withOpacity(0.8),
-              const Color(0xFF8E2DE2).withOpacity(0.5),
-              Colors.white.withOpacity(0.1),
+              const Color(0xFF4A00E0).withAlpha(204), 
+              const Color(0xFF8E2DE2).withAlpha(128), 
+              Colors.white.withAlpha(26),             
             ],
           ),
         ),
